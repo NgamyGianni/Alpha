@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Alpha</title>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
     <meta charset="utf-8">
+    <title>Directions Service</title>
     <style>
       /* Always set the map height explicitly to define the size of the div
        * element that contains the map. */
       #map {
-        height: 90%;
+        height: 100%;
       }
       /* Optional: Makes the sample page fill the window. */
       html, body {
@@ -16,34 +16,41 @@
         margin: 0;
         padding: 0;
       }
-
+      #floating-panel {
+        position: absolute;
+        top: 10px;
+        left: 25%;
+        z-index: 5;
+        background-color: #fff;
+        padding: 5px;
+        border: 1px solid #999;
+        text-align: center;
+        font-family: 'Roboto','sans-serif';
+        line-height: 30px;
+        padding-left: 10px;
+      }
     </style>
   </head>
   <body>
-    <h3>My Alpha Demo</h3>
-    <div id="bar">
-      <p class="auto"><input type="text" id="autoc"/></p>
+    <div id="floating-panel">
+    <b>Départ: </b>
+    <input id="start" type="text" name="depart">
+    <b>Arrivé: </b>
+    <input id="end" type="text" name="arrivé">
+    <input id="btn" type="button" name="btn" value="Ok">
     </div>
-    <!--The div element for the map -->
     <div id="map"></div>
     <script>
-      <script src="/_static/js/jquery-bundle.js"></script>
-    <script
-      src="https://maps.googleapis.com/maps/api/js?libraries=drawing,places"></script>
-    <script>
-      // Note: This example requires that you consent to location sharing when
-      // prompted by your browser. If you see the error "The Geolocation service
-      // failed.", it means you probably did not give permission for the browser to
-      // locate you.
-      var map, infoWindow;
       function initMap() {
-        map = new google.maps.Map(document.getElementById('map'), {
-          center: {lat: -34.397, lng: 150.644},
-          zoom: 10
+        var directionsService = new google.maps.DirectionsService();
+        var directionsRenderer = new google.maps.DirectionsRenderer();
+        var map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 7,
+          center: {lat: 41.85, lng: -87.65}
         });
-        infoWindow = new google.maps.InfoWindow;
 
-        // Try HTML5 geolocation.
+        var infoWindow = new google.maps.InfoWindow;
+        
         if (navigator.geolocation) {
           navigator.geolocation.getCurrentPosition(function(position) {
             var pos = {
@@ -62,6 +69,29 @@
           // Browser doesn't support Geolocation
           handleLocationError(false, infoWindow, map.getCenter());
         }
+
+        directionsRenderer.setMap(map);
+
+        var onChangeHandler = function() {
+          calculateAndDisplayRoute(directionsService, directionsRenderer);
+        };
+        document.getElementById('btn').addEventListener('click', onChangeHandler);
+      }
+
+      function calculateAndDisplayRoute(directionsService, directionsRenderer) {
+        directionsService.route(
+            {
+              origin: {query: document.getElementById('start').value},
+              destination: {query: document.getElementById('end').value},
+              travelMode: 'DRIVING'
+            },
+            function(response, status) {
+              if (status === 'OK') {
+                directionsRenderer.setDirections(response);
+              } else {
+                window.alert('Directions request failed due to ' + status);
+              }
+            });
       }
 
       function handleLocationError(browserHasGeolocation, infoWindow, pos) {
@@ -71,34 +101,11 @@
                               'Error: Your browser doesn\'t support geolocation.');
         infoWindow.open(map);
       }
-
-      /*map.controls[google.maps.ControlPosition.RIGHT_TOP].push(document.getElementById('bar'));
-      var autocomplete = new google.maps.places.Autocomplete(document.getElementById('autoc'));
-      autocomplete.bindTo('bounds', map);
-      autocomplete.addListener('place_changed', 
-        function() {
-          var place = autocomplete.getPlace();
-          if (place.geometry.viewport) {
-            map.fitBounds(place.geometry.viewport);
-          } else {
-            map.setCenter(place.geometry.location);
-            map.setZoom(17);
-          }
-        });
-        */
-
     </script>
-    <!--Load the API from the specified URL
-    * The async attribute allows the browser to render the page while the API loads
-    * The key parameter will contain your own API key (which is not needed for this tutorial)
-    * The callback parameter executes the initMap() function
-    -->
     <script async defer
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBeJBseo2iePJ_DCh7iIO28cjf9qTk-6bo&callback=initMap">
     </script>
   </body>
 </html>
-
-
 
 
