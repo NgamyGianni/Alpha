@@ -3,7 +3,7 @@
   <head>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
     <meta charset="utf-8">
-    <title>Directions Service</title>
+    <title>Alpha</title>
     <style>
       /* Always set the map height explicitly to define the size of the div
        * element that contains the map. */
@@ -37,7 +37,19 @@
     <input id="start" type="text" name="depart">
     <b>Arrivé: </b>
     <input id="end" type="text" name="arrivé">
+    <select id="temps">
+      <option value="1">1</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="4">4</option>
+      <option value="5">5</option>
+      <option value="6">6</option>
+      <option value="7">7</option>
+      <option value="8">8</option>
+    </select>
     <input id="btn" type="button" name="btn" value="Ok">
+    <p id="distance"></p>
+    <p id="prix"></p>
     </div>
     <div id="map"></div>
     <script>
@@ -88,10 +100,33 @@
             function(response, status) {
               if (status === 'OK') {
                 directionsRenderer.setDirections(response);
+                document.getElementById('distance').textContent = "distance = " + directionsRenderer.getDirections().routes[0].legs[0].distance.value/1000 + " km";
+                prix(directionsRenderer.getDirections().routes[0].legs[0].distance.value/1000, document.getElementById('temps').value)
               } else {
                 window.alert('Directions request failed due to ' + status);
               }
             });
+      }
+
+      function prix(distance, temps){
+        var x = 0;
+        let express = 2;
+
+        if (temps <= express){
+            if (distance <= 2){
+                x = 4.0;
+            }
+            else{
+                x = 6.5 + 0.3*(distance-10);
+            }
+        }
+        else{
+            x = 6.5 - (0.5*(temps-1)) + 0.3*(distance-10);
+        }
+        if (x < 3){
+            x = 3.0;
+        }
+        document.getElementById('prix').textContent = "prix = " + x + " euros";
       }
 
       function handleLocationError(browserHasGeolocation, infoWindow, pos) {
