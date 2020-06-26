@@ -15,13 +15,13 @@ catch(PDOException $e) {
     die($msg);
 }
 
-$query="INSERT IGNORE INTO table_user (attribut1,attribut2,attribut3)
-VALUES (:attribut1,;attribut2,:attribut3)";
+$query="INSERT IGNORE INTO table_user (username,password,email)
+VALUES (:username1,password,:email)";
 
 $prep=$pdo->prepare($query);
-$prep->bindValue(':attribut1',$_GET["username"],PDO::PARAM_STR);
-$prep->bindValue(':attribut2s',$_GET["password"], PDO::PARAM_STR);
-$prep->bindValue(':attribut3',$_GET["email"], PDO::PARAM_STR);
+$prep->bindValue(':username',$_GET["username"],PDO::PARAM_STR);
+$prep->bindValue(':passwords',$_GET["password"], PDO::PARAM_STR);
+$prep->bindValue(':email',$_GET["email"], PDO::PARAM_STR);
 $prep->execute();
 
 $prep=NULL;
