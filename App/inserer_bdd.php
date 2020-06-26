@@ -16,7 +16,7 @@ catch(PDOException $e) {
 }
 
 $query="INSERT IGNORE INTO table_user (username,password,email)
-VALUES (:username1,password,:email)";
+VALUES (:username1,:password,:email)";
 
 $prep=$pdo->prepare($query);
 $prep->bindValue(':username',$_GET["username"],PDO::PARAM_STR);
