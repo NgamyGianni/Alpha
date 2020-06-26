@@ -33,11 +33,11 @@ if(!empty($_GET))
     if(!empty($_GET['username']) && !empty($_GET['password']))
     {
         // Sont-ils les mêmes que les constantes ?
-        if($_GET['username'] !== USERNAME)
+        if(($_GET['username'] !== USERNAME) || ($_GET['username'] !== $result["username"]))
         {
             $errorMessage = 'Mauvais username !';
         }
-        elseif($_GET['password'] !== PASSWORD)
+        elseif(($_GET['password'] !== PASSWORD) || ($_GET['password'] !== $result["password"]))
         {
             $errorMessage = 'Mauvais password !';
         }
@@ -51,7 +51,7 @@ if(!empty($_GET))
             header('Location: admin.php');
             exit();
         }
-        elseif($_GET['username'] !== $result["username"] && $_GET['password'] !== $result["password"]){
+        elseif(!empty($result)){
             session_start();
             // On enregistre le login en session
             $_SESSION['username'] = $result["username"];
