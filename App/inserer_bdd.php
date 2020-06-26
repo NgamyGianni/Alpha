@@ -15,4 +15,11 @@ catch(PDOException $e) {
     die($msg);
 }
 
+$query="INSERT IGNORE INTO table_user (attribut1,attribut2,attribut3,attribut4)
+VALUES (?,?,?,?)";
 
+$prep=$pdo->prepare($query);
+$prep->bindValue(1,$_GET["username"],PDO::PARAM_STR);
+$prep->bindValue(1,$_GET["password"], PDO::PARAM_STR);
+$prep->bindValue(2,$_GET["email"], PDO::PARAM_STR);
+$prep->execute();
