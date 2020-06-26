@@ -1,3 +1,71 @@
+<?php
+define('LOGIN','toto');
+define('PASSWORD','tata');
+$errorMessage = '';
+$servername="";
+$username="";
+$password="";
+$dbname="";
+
+try {
+    $strConnection = 'mysql:host='.$servername.";dbname=".$dbname; //Ligne 1
+    $arrExtraParam= array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"); //Ligne 2
+    $pdo = new PDO($strConnection,$username, $password, $arrExtraParam); //Ligne 3; Instancie la connexion
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);//Ligne 4
+}
+catch(PDOException $e) {
+    $msg = 'ERREUR PDO dans ' . $e->getFile() . ' L.' . $e->getLine() . ' : ' . $e->getMessage();
+    die($msg);
+}
+
+$query="SELECT username,password FROM table_user WHERE username=:username AND password=:=password";
+$prep=$pdo->prepare($query);
+$prep->bindValue(':username',$_GET["username"],PDO::PARAM_STR);
+$prep->bindValue(':password',$_GET["password"],PDO::PARAM_STR);
+$prep->execute();
+$result=$prep->setFetchMode(PDO::FETCH_ASSOC);
+
+
+// Test de l'envoi du formulaire
+if(!empty($_GET))
+{
+    // Les identifiants sont transmis ?
+    if(!empty($_GET['username']) && !empty($_GET['password']))
+    {
+        // Sont-ils les mêmes que les constantes ?
+        if($_GET['username'] !== USERNAME)
+        {
+            $errorMessage = 'Mauvais username !';
+        }
+        elseif($_GET['password'] !== PASSWORD)
+        {
+            $errorMessage = 'Mauvais password !';
+        }
+        elseif($_GET['username'] !== USERNAME && $_GET['password'] !== PASSWORD)
+        {
+            // On ouvre la session
+            session_start();
+            // On enregistre le login en session
+            $_SESSION['username'] = USERNAME;
+            // On redirige vers la page admin
+            header('Location: admin.php');
+            exit();
+        }
+        elseif($_GET['username'] !== $result["username"] && $_GET['password'] !== $result["password"]){
+            session_start();
+            // On enregistre le login en session
+            $_SESSION['username'] = $result["username"];
+            // On redirige vers la page user
+            header('Location: user.php');
+            exit();
+        }
+    }
+    else
+    {
+        $errorMessage = 'Veuillez inscrire vos identifiants svp !';
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -42,7 +110,7 @@
           </div>
 
           <div class="wrap-input100 validate-input m-b-50" data-validate="Enter password">
-            <input class="input100" type="password" name="pass">
+            <input class="input100" type="password" name="password">
             <span class="focus-input100" data-placeholder="Password"></span>
           </div>
 
