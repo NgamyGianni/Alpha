@@ -50,6 +50,7 @@
     <input id="btn" type="button" name="btn" value="Ok">
     <p id="distance"></p>
     <p id="prix"></p>
+    <p id="tempsdis"></p>
     </div>
     <div id="map"></div>
     <script>
@@ -58,7 +59,8 @@
         var directionsRenderer = new google.maps.DirectionsRenderer();
         var map = new google.maps.Map(document.getElementById('map'), {
           zoom: 7,
-          center: {lat: 41.85, lng: -87.65}
+          center: {lat: 41.85, lng: -87.65},
+          disableDefaultUI: true
         });
 
         var infoWindow = new google.maps.InfoWindow;
@@ -110,8 +112,9 @@
             function(response, status) {
               if (status === 'OK') {
                 directionsRenderer.setDirections(response);
-                document.getElementById('distance').textContent = "distance = " + directionsRenderer.getDirections().routes[0].legs[0].distance.value/1000 + " km";
+                document.getElementById('distance').textContent = "distance = " + directionsRenderer.getDirections().routes[0].legs[0].distance.text;
                 prix(directionsRenderer.getDirections().routes[0].legs[0].distance.value/1000, document.getElementById('temps').value)
+                document.getElementById('tempsdis').textContent = "durée trajet = " + directionsRenderer.getDirections().routes[0].legs[0].duration.text;
               } else {
                 window.alert('Directions request failed due to ' + status);
               }
@@ -152,5 +155,3 @@
     </script>
   </body>
 </html>
-
-
