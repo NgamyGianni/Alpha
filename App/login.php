@@ -41,7 +41,7 @@ if(!empty($_GET))
         {
             $errorMessage = 'Mauvais password !';
         }
-        elseif($_GET['username'] !== USERNAME && $_GET['password'] !== PASSWORD)
+        elseif($_GET['username'] == USERNAME && $_GET['password'] == PASSWORD)
         {
             // On ouvre la session
             session_start();
